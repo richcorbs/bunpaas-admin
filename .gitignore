@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Secrets
+.richhost
+
+# OS files
+.DS_Store

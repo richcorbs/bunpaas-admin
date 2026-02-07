@@ -1,0 +1,9 @@
+{
+  "environments": {
+    "production": "paas-admin.richcorbs.com",
+    "development": "paas-admin.localhost"
+  },
+  "platform": true,
+  "auth": "basic",
+  "maxUpload": "100MB"
+}

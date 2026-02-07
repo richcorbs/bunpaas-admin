@@ -1,0 +1,14 @@
+{
+  "name": "paas-admin.richcorbs.com",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun ../cli.js build",
+    "dev": "bun ../cli.js dev",
+    "deploy": "bun ../cli.js deploy"
+  },
+  "dependencies": {
+    "tar": "^7.5.7"
+  }
+}
