@@ -5,7 +5,7 @@ node_modules/
 dist/
 
 # Secrets
-.richhost
+.bunpaas
 
 # OS files
 .DS_Store

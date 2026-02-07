@@ -1,7 +1,7 @@
 {
   "environments": {
-    "production": "paas-admin.richcorbs.com",
-    "development": "paas-admin.localhost"
+    "production": "bunpaas-admin.richcorbs.com",
+    "development": "bunpaas-admin.localhost"
   },
   "platform": true,
   "auth": "basic",

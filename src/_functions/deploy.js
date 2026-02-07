@@ -28,11 +28,6 @@ export async function post(req) {
     };
   }
 
-  // Map .localhost to .richcorbs.com for dev deployments
-  if (targetHost.endsWith(".localhost")) {
-    targetHost = targetHost.replace(".localhost", ".richcorbs.com");
-  }
-
   // Verify site exists and deploy key matches
   const site = await getSiteByHost(DATA_DIR, targetHost);
   if (!site) {

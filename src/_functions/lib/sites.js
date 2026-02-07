@@ -88,12 +88,12 @@ export async function getPlatformConfig(dataDir) {
   const sites = await getSites(dataDir);
 
   // Find platform sites and derive config
-  const landingHost = Object.keys(sites).find((h) => h.startsWith("paas."));
-  const adminHost = Object.keys(sites).find((h) => h.startsWith("paas-admin."));
+  const landingHost = Object.keys(sites).find((h) => h.startsWith("bunpaas."));
+  const adminHost = Object.keys(sites).find((h) => h.startsWith("bunpaas-admin."));
 
   return {
-    landing: landingHost || "paas.richcorbs.com",
-    admin: adminHost || "paas-admin.richcorbs.com",
+    landing: landingHost || "bunpaas.localhost",
+    admin: adminHost || "bunpaas-admin.localhost",
   };
 }
 
