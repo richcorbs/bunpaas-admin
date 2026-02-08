@@ -4,6 +4,6 @@
     "development": "bunpaas-admin.localhost"
   },
   "platform": true,
-  "auth": "basic",
+  "auth": { "type": "basic", "paths": ["/admin"] },
   "maxUpload": "100MB"
 }
