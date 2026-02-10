@@ -3,7 +3,6 @@ import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
 import { getSiteByHost, updateSite } from "./lib/sites.js";
-import { clearFunctionCache } from "./lib/functions.js";
 
 const execAsync = promisify(exec);
 const DATA_DIR = "/var/www";
@@ -103,9 +102,6 @@ export async function post(req) {
 
     // Clean up temp directory
     await fs.rm(tempDir, { recursive: true, force: true });
-
-    // Clear function cache for this site
-    clearFunctionCache(targetHost);
 
     // Get deploy stats
     const stats = await getDirectoryStats(newDeployDir);
