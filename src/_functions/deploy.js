@@ -2,12 +2,12 @@ import { promises as fs } from "fs";
 import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { getSiteByHost, updateSite } from "./lib/sites.js";
+import { getSiteByHost } from "./lib/sites.js";
 
 const execAsync = promisify(exec);
 const DATA_DIR = "/var/www";
 const MAX_DEPLOYS = 4;      // Directories kept on disk (extra buffer for cached server)
-const MAX_HISTORY = 10;     // Timestamps kept in sites.json
+const MAX_DEPLOY_LOGS = 50;  // Deploy entries kept in log file
 
 /**
  * POST /deploy - Receive and extract a deploy tarball
@@ -106,20 +106,32 @@ export async function post(req) {
     // Get deploy stats
     const stats = await getDirectoryStats(newDeployDir);
 
-    // Update site with deploy history (keep last 10)
-    const deployHistory = site.deployHistory || [];
+    // Write to deploy log file instead of sites.json
+    const deployLogPath = path.join(DATA_DIR, "logs", `${targetHost}-deploys.json`);
+    let deployHistory = [];
+    try {
+      const content = await fs.readFile(deployLogPath, "utf8");
+      deployHistory = JSON.parse(content);
+    } catch {
+      // No log file yet
+    }
+
     deployHistory.unshift({
       timestamp: isoTimestamp,
       files: stats.files,
       size: stats.size,
     });
-    if (deployHistory.length > MAX_HISTORY) {
-      deployHistory.length = MAX_HISTORY;
+    if (deployHistory.length > MAX_DEPLOY_LOGS) {
+      deployHistory.length = MAX_DEPLOY_LOGS;
     }
 
+    await fs.mkdir(path.join(DATA_DIR, "logs"), { recursive: true });
+    await fs.writeFile(deployLogPath, JSON.stringify(deployHistory, null, 2));
+
+    // Update lastDeploy in sites.json (but not deployHistory)
+    const { updateSite } = await import("./lib/sites.js");
     await updateSite(DATA_DIR, targetHost, {
       lastDeploy: isoTimestamp,
-      deployHistory,
     });
 
     return {

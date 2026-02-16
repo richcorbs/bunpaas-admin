@@ -1,6 +1,5 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { getSiteByHost } from "../../lib/sites.js";
 
 const DATA_DIR = "/var/www";
 
@@ -16,13 +15,7 @@ export async function get(req) {
   const { host } = req.params;
 
   try {
-    const site = await getSiteByHost(DATA_DIR, host);
-    if (!site) {
-      return { status: 404, body: { error: "Site not found" } };
-    }
-
-    // Read from per-site log file
-    const logFile = path.join(DATA_DIR, "logs", `${host}.json`);
+    const logFile = path.join(DATA_DIR, "logs", `${host}-requests.json`);
     let logs = [];
     try {
       const content = await fs.readFile(logFile, "utf8");

@@ -1,6 +1,5 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { getSiteByHost } from "../../lib/sites.js";
 
 const DATA_DIR = "/var/www";
 
@@ -16,12 +15,6 @@ export async function get(req) {
   const { host } = req.params;
 
   try {
-    // Get site config with deploy history
-    const site = await getSiteByHost(DATA_DIR, host);
-    if (!site) {
-      return { status: 404, body: { error: "Site not found" } };
-    }
-
     const siteDir = path.join(DATA_DIR, "sites", host);
     const deploysDir = path.join(siteDir, "_deploys");
     const currentLink = path.join(siteDir, "current");
@@ -44,10 +37,18 @@ export async function get(req) {
       // No deploys directory
     }
 
+    // Read deploy history from separate log file
+    const deployFile = path.join(DATA_DIR, "logs", `${host}-deploys.json`);
+    let deployHistory = [];
+    try {
+      const content = await fs.readFile(deployFile, "utf8");
+      deployHistory = JSON.parse(content);
+    } catch {
+      // No deploy log file yet
+    }
+
     // Build deploy list from history, marking which are available for rollback
-    const deployHistory = site.deployHistory || [];
     const deploys = deployHistory.map((entry) => {
-      // Handle both old format (string) and new format (object)
       const timestamp = typeof entry === "string" ? entry : entry.timestamp;
       const files = typeof entry === "object" ? entry.files : null;
       const size = typeof entry === "object" ? entry.size : null;
